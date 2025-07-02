@@ -12,8 +12,11 @@
       />
     </video>
 
-    <div id="caption-container">
-      <span class="captions">Hello, world!</span>
+    <div id="captions-container">
+      <div class="captions">
+        <div class="caption-line">Hello, world!</div>
+        <div class="caption-line">Line 2</div>
+      </div>
     </div>
   </div>
 
@@ -43,7 +46,7 @@
     width: 100%;
   }
 
-  #caption-container {
+  #captions-container {
     position-anchor: --videoContainer;
     position: fixed;
     bottom: calc(anchor(bottom) + 8px);
@@ -55,12 +58,21 @@
 
   .captions {
     width: fit-content;
-    background: rgba(8, 8, 8, 0.75);
+
     color: #ffffff;
     font-family: "Roboto";
-    padding: 0 0.25em;
+
     white-space: pre-wrap;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     font-size: 32px;
+  }
+
+  .caption-line {
+    text-align: center;
+    width: fit-content;
+    padding: 0 0.25em;
+    background: rgba(8, 8, 8, 0.75);
   }
 </style>
