@@ -3,16 +3,25 @@
   import { onMount } from "svelte";
 
   type Caption = {
-    times: number[]; // [start time, end time] in seconds
+    times: [number, number]; // [start time, end time] in seconds
     lines: string[];
   };
+  type CaptionDivData = {
+    show: boolean;
+    percent: number;
+    text: string;
+  };
 
-  const videoCaptions: Caption[] = [{ times: [1, 2.5], lines: ["time"] }];
+  const videoCaptions: Caption[] = [
+    { times: [1, 2.5], lines: ["Caption 1"] },
+    { times: [6, 12], lines: ["Caption 2", "second line"] },
+  ];
 
   let video: HTMLVideoElement = $state();
   let playing: boolean = $state(false);
 
   let currentCaption: Caption | undefined = $state(undefined);
+  let captionDivData: CaptionDivData[] = $state();
 
   function togglePlayback() {
     if (playing) video.pause();
@@ -20,7 +29,46 @@
     playing = !playing;
   }
 
+  function generateCaptionDivData(captions: Caption[]) {
+    console.log(video.duration);
+
+    let divData: CaptionDivData[] = [];
+    const sortedCaptions = captions.toSorted((a, b) => a.times[0] - b.times[0]);
+
+    divData.push({
+      show: false,
+      percent: sortedCaptions[0].times[0] / video.duration,
+      text: "",
+    });
+
+    for (let captionIndex in sortedCaptions) {
+      const caption = sortedCaptions[captionIndex];
+      divData.push({
+        show: true,
+        percent: (caption.times[1] - caption.times[0]) / video.duration,
+        text: caption.lines.join(" "),
+      });
+
+      if (Number(captionIndex) + 1 == sortedCaptions.length) continue;
+
+      divData.push({
+        show: false,
+        percent:
+          (sortedCaptions[Number(captionIndex) + 1].times[0] -
+            caption.times[1]) /
+          video.duration,
+        text: "",
+      });
+    }
+
+    return divData;
+  }
+
   onMount(() => {
+    video.addEventListener("loadedmetadata", () => {
+      captionDivData = generateCaptionDivData(videoCaptions);
+    });
+
     video.addEventListener("timeupdate", () => {
       const currentTime = video.currentTime;
 
@@ -102,6 +150,17 @@
       </button>
     </div>
   </div>
+
+  <div id="timeline">
+    {#each captionDivData as divData}
+      <div
+        class="timeline-caption {divData.show ? '' : 'timeline-caption-hidden'}"
+        style="width: calc(var(--videoWidth) * {divData.percent})"
+      >
+        <span>{divData.text}</span>
+      </div>
+    {/each}
+  </div>
 </main>
 
 <style>
@@ -165,5 +224,32 @@
 
   button {
     margin: 0 4px;
+  }
+
+  #timeline {
+    width: var(--videoWidth);
+    background: #202020;
+    padding: 8px 0;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .timeline-caption {
+    height: 32px;
+    background: rgb(138, 100, 209);
+    text-overflow: clip;
+    white-space: nowrap;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .timeline-caption-hidden {
+    background: none;
+  }
+
+  .timeline-caption span {
+    margin: 0 8px;
+    user-select: none;
   }
 </style>
