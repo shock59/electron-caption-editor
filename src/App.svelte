@@ -1,14 +1,45 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import { onMount } from "svelte";
+
+  type Caption = {
+    times: number[]; // [start time, end time] in seconds
+    lines: string[];
+  };
+
+  const videoCaptions: Caption[] = [{ times: [1, 2.5], lines: ["time"] }];
 
   let video: HTMLVideoElement = $state();
   let playing: boolean = $state(false);
+
+  let currentCaption: Caption | undefined = $state(undefined);
 
   function togglePlayback() {
     if (playing) video.pause();
     else video.play();
     playing = !playing;
   }
+
+  onMount(() => {
+    video.addEventListener("timeupdate", () => {
+      const currentTime = video.currentTime;
+
+      if (
+        currentCaption &&
+        (currentCaption.times[0] > currentTime ||
+          currentCaption.times[1] < currentTime)
+      ) {
+        currentCaption = undefined;
+      }
+
+      if (!currentCaption) {
+        currentCaption = videoCaptions.find(
+          (caption) =>
+            caption.times[0] <= currentTime && caption.times[1] >= currentTime
+        );
+      }
+    });
+  });
 </script>
 
 <main>
@@ -24,8 +55,9 @@
 
       <div id="captions-container">
         <div class="captions">
-          <div class="caption-line">Hello, world!</div>
-          <div class="caption-line">Line 2</div>
+          {#each currentCaption?.lines as line}
+            <div class="caption-line">{line}</div>
+          {/each}
         </div>
       </div>
     </div>
