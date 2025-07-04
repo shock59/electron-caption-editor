@@ -58,26 +58,31 @@
   });
 </script>
 
-<div id="timeline">
-  {#each captionDivData as divData}
-    <div
-      class="timeline-caption {divData.show ? '' : 'timeline-caption-hidden'}"
-      style="flex-basis: calc(var(--videoWidth) * {divData.percent *
-        timelineZoom})"
-    >
-      <span>{divData.text}</span>
+<div id="timeline-outer-container">
+  <div id="timeline-scrollable-container">
+    <div id="timeline">
+      {#each captionDivData as divData}
+        <div
+          class="timeline-caption {divData.show
+            ? ''
+            : 'timeline-caption-hidden'}"
+          style="flex-basis: calc(var(--videoWidth) * {divData.percent *
+            timelineZoom})"
+        >
+          <span>{divData.text}</span>
+        </div>
+      {/each}
     </div>
-  {/each}
-</div>
 
-<!-- TODO: Make the playhead work with scrolling -->
-<div id="playhead-container">
-  <div
-    id="playhead"
-    style="margin-left: calc(var(--videoWidth) * {(currentTime /
-      videoDuration) *
-      timelineZoom} - 1px)"
-  ></div>
+    <div id="playhead-container">
+      <div
+        id="playhead"
+        style="margin-left: calc(var(--videoWidth) * {(currentTime /
+          videoDuration) *
+          timelineZoom} - 1px)"
+      ></div>
+    </div>
+  </div>
 </div>
 
 <p>
@@ -94,13 +99,20 @@
 </p>
 
 <style>
-  #timeline {
+  #timeline-outer-container {
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+  }
+
+  #timeline-scrollable-container {
     width: var(--videoWidth);
+    overflow-x: scroll;
     background: #202020;
+  }
+  #timeline {
     padding: 8px 0;
     display: flex;
     flex-direction: row;
-    overflow-x: scroll;
     anchor-name: --timeline;
   }
 
