@@ -5,9 +5,11 @@
   let {
     captions,
     videoDuration,
-  }: { captions: Caption[]; videoDuration: number } = $props();
+    currentTime,
+  }: { captions: Caption[]; videoDuration: number; currentTime: number } =
+    $props();
 
-  function generateCaptionDivData(captions: Caption[], videoDuration: number) {
+  function generateCaptionDivData() {
     console.log(videoDuration);
 
     let divData: CaptionDivData[] = [];
@@ -52,7 +54,7 @@
   let timelineZoom: number = $state(1);
 
   onMount(() => {
-    captionDivData = generateCaptionDivData(captions, videoDuration);
+    captionDivData = generateCaptionDivData();
   });
 </script>
 
@@ -60,11 +62,22 @@
   {#each captionDivData as divData}
     <div
       class="timeline-caption {divData.show ? '' : 'timeline-caption-hidden'}"
-      style="flex-basis: calc(var(--videoWidth) * {divData.percent} * {timelineZoom})"
+      style="flex-basis: calc(var(--videoWidth) * {divData.percent *
+        timelineZoom})"
     >
       <span>{divData.text}</span>
     </div>
   {/each}
+</div>
+
+<!-- TODO: Make the playhead work with scrolling -->
+<div id="playhead-container">
+  <div
+    id="playhead"
+    style="margin-left: calc(var(--videoWidth) * {(currentTime /
+      videoDuration) *
+      timelineZoom} - 1px)"
+  ></div>
 </div>
 
 <p>
@@ -88,6 +101,7 @@
     display: flex;
     flex-direction: row;
     overflow-x: scroll;
+    anchor-name: --timeline;
   }
 
   .timeline-caption {
@@ -109,5 +123,20 @@
   .timeline-caption span {
     margin: 0 8px;
     user-select: none;
+  }
+
+  #playhead-container {
+    position-anchor: --timeline;
+    position: fixed;
+    top: anchor(top);
+    left: anchor(left);
+    width: var(--videoWidth);
+    height: calc(32px + (8px * 2));
+  }
+
+  #playhead {
+    width: 2px;
+    height: 100%;
+    background: red;
   }
 </style>
