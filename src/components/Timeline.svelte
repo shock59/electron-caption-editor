@@ -9,6 +9,11 @@
   }: { captions: Caption[]; videoDuration: number; currentTime: number } =
     $props();
 
+  // This is used as the divisor for all width operations and sets the scale of the timeline
+  // If set to videoDuration then a zoom level of 1 will fit exactly the entire video in the timeline.
+  // However, that means the size of things will not be consistent across different video durations.
+  const divisor = 500;
+
   function generateCaptionDivData() {
     console.log(videoDuration);
 
@@ -17,7 +22,7 @@
 
     divData.push({
       show: false,
-      percent: sortedCaptions[0].times[0] / videoDuration,
+      percent: sortedCaptions[0].times[0] / divisor,
       text: "",
     });
 
@@ -25,7 +30,7 @@
       const caption = sortedCaptions[captionIndex];
       divData.push({
         show: true,
-        percent: (caption.times[1] - caption.times[0]) / videoDuration,
+        percent: (caption.times[1] - caption.times[0]) / divisor,
         text: caption.lines.join(" "),
       });
 
@@ -36,14 +41,14 @@
         percent:
           (sortedCaptions[Number(captionIndex) + 1].times[0] -
             caption.times[1]) /
-          videoDuration,
+          divisor,
         text: "",
       });
     }
 
     divData.push({
       show: false,
-      percent: (videoDuration - sortedCaptions.at(-1).times[1]) / videoDuration,
+      percent: (videoDuration - sortedCaptions.at(-1).times[1]) / divisor,
       text: "",
     });
 
@@ -77,8 +82,7 @@
     <div id="playhead-container">
       <div
         id="playhead"
-        style="margin-left: calc(var(--videoWidth) * {(currentTime /
-          videoDuration) *
+        style="margin-left: calc(var(--videoWidth) * {(currentTime / divisor) *
           timelineZoom} - 1px)"
       ></div>
     </div>
