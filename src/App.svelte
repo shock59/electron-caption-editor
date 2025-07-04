@@ -23,6 +23,8 @@
   let currentCaption: Caption | undefined = $state(undefined);
   let captionDivData: CaptionDivData[] = $state();
 
+  let timelineZoom: number = $state(1);
+
   function togglePlayback() {
     if (playing) video.pause();
     else video.play();
@@ -60,6 +62,13 @@
         text: "",
       });
     }
+
+    divData.push({
+      show: false,
+      percent:
+        (video.duration - sortedCaptions.at(-1).times[1]) / video.duration,
+      text: "",
+    });
 
     return divData;
   }
@@ -155,12 +164,25 @@
     {#each captionDivData as divData}
       <div
         class="timeline-caption {divData.show ? '' : 'timeline-caption-hidden'}"
-        style="width: calc(var(--videoWidth) * {divData.percent})"
+        style="flex-basis: calc(var(--videoWidth) * {divData.percent} * {timelineZoom})"
       >
         <span>{divData.text}</span>
       </div>
     {/each}
   </div>
+
+  <p>
+    <label for="zoom-input">Zoom</label>
+    <input
+      bind:value={timelineZoom}
+      type="range"
+      min="1"
+      max="10"
+      step="0.1"
+      defaultValue="1"
+      id="zoom-input"
+    />
+  </p>
 </main>
 
 <style>
@@ -232,6 +254,7 @@
     padding: 8px 0;
     display: flex;
     flex-direction: row;
+    overflow-x: scroll;
   }
 
   .timeline-caption {
@@ -240,6 +263,8 @@
     text-overflow: clip;
     white-space: nowrap;
     overflow: hidden;
+    flex-grow: 0;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
   }
