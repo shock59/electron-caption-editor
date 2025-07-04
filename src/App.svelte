@@ -14,7 +14,6 @@
   let playing: boolean = $state(false);
 
   let currentCaption: Caption | undefined = $state(undefined);
-  let captionDivData: CaptionDivData[] = $state();
 
   function togglePlayback() {
     if (playing) video.pause();
