@@ -53,78 +53,88 @@
 </script>
 
 <main>
-  <div id="video-container">
-    <div id="player-container">
-      <!-- svelte-ignore a11y_media_has_caption -->
-      <video bind:this={video}>
-        <source
-          src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-          type="video/mp4"
-        />
-      </video>
+  <div class="row">
+    <div class="column">
+      <div id="video-container">
+        <div id="player-container">
+          <!-- svelte-ignore a11y_media_has_caption -->
+          <video bind:this={video}>
+            <source
+              src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+              type="video/mp4"
+            />
+          </video>
 
-      <div id="captions-container">
-        <div class="captions">
-          {#each currentCaption?.lines as line}
-            <div class="caption-line">{line}</div>
-          {/each}
+          <div id="captions-container">
+            <div class="captions">
+              {#each currentCaption?.lines as line}
+                <div class="caption-line">{line}</div>
+              {/each}
+            </div>
+          </div>
+        </div>
+
+        <div id="button-row">
+          <button>
+            <Icon
+              icon="mdi:rewind-5"
+              width="24"
+              height="24"
+              onclick={() => {
+                video.currentTime -= 5;
+              }}
+            />
+          </button>
+
+          <button>
+            <Icon icon="mdi:arrow-back" width="24" height="24" />
+          </button>
+
+          <button onclick={togglePlayback}>
+            {#if playing}
+              <Icon icon="mdi:pause" width="24" height="24" />
+            {:else}
+              <Icon icon="mdi:play" width="24" height="24" />
+            {/if}
+          </button>
+
+          <button>
+            <Icon icon="mdi:arrow-forward" width="24" height="24" />
+          </button>
+
+          <button>
+            <Icon
+              icon="mdi:fast-forward-5"
+              width="24"
+              height="24"
+              onclick={() => {
+                video.currentTime += 5;
+              }}
+            />
+          </button>
         </div>
       </div>
+
+      {#if videoLoaded}
+        <Timeline
+          captions={videoCaptions}
+          videoDuration={video.duration}
+          {currentTime}
+        />
+      {/if}
     </div>
 
-    <div id="button-row">
-      <button>
-        <Icon
-          icon="mdi:rewind-5"
-          width="24"
-          height="24"
-          onclick={() => {
-            video.currentTime -= 5;
-          }}
-        />
-      </button>
-
-      <button>
-        <Icon icon="mdi:arrow-back" width="24" height="24" />
-      </button>
-
-      <button onclick={togglePlayback}>
-        {#if playing}
-          <Icon icon="mdi:pause" width="24" height="24" />
-        {:else}
-          <Icon icon="mdi:play" width="24" height="24" />
-        {/if}
-      </button>
-
-      <button>
-        <Icon icon="mdi:arrow-forward" width="24" height="24" />
-      </button>
-
-      <button>
-        <Icon
-          icon="mdi:fast-forward-5"
-          width="24"
-          height="24"
-          onclick={() => {
-            video.currentTime += 5;
-          }}
-        />
-      </button>
+    <div id="editing-panel">
+      <textarea>{currentCaption?.lines.join("\n")}</textarea>
     </div>
   </div>
-
-  {#if videoLoaded}
-    <Timeline
-      captions={videoCaptions}
-      videoDuration={video.duration}
-      {currentTime}
-    />
-  {/if}
 </main>
 
 <style>
   * {
-    --videoWidth: 1280px;
+    --videoWidth: 800px;
+    --videoHeight: calc(var(--videoWidth) * (9 / 16));
+    --captionFont: "Roboto";
   }
 
   #video-container {
@@ -135,7 +145,7 @@
 
   #player-container {
     width: 100%;
-    height: calc(var(--videoWidth) * (9 / 16));
+    height: var(--videoHeight);
     anchor-name: --videoContainer;
   }
 
@@ -157,13 +167,13 @@
     width: fit-content;
 
     color: #ffffff;
-    font-family: "Roboto";
+    font-family: var(--captionFont);
 
     white-space: pre-wrap;
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 32px;
+    font-size: 20px;
   }
 
   .caption-line {
@@ -183,5 +193,15 @@
 
   button {
     margin: 0 4px;
+  }
+
+  textarea {
+    font-family: var(--captionFont);
+    font-size: 20px;
+    text-align: center;
+    text-wrap-mode: nowrap;
+    width: calc(var(--videoWidth) * 0.75);
+    margin-left: 8px;
+    height: 100px;
   }
 </style>
