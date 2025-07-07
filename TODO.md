@@ -19,7 +19,7 @@ The todo list may be added to in the future and these items may not necessarily 
 - [ ] Click track to edit
 
 ## Editing Sidebar
-- [ ] Base sidebar display
+- [x] Base sidebar display
 - [ ] Editing textarea updates caption
 - [ ] Setting caption start and end times
 - [ ] Setting caption position/colours
