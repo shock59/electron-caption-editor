@@ -125,6 +125,22 @@
     </div>
 
     <div id="editing-panel">
+      <div class="row">
+        <label for="start-time-input">Start</label>
+        <input
+          id="start-time-input"
+          type="number"
+          value={currentCaption?.times[0]}
+        />
+
+        <label for="end-time-input">End</label>
+        <input
+          id="end-time-input"
+          type="number"
+          value={currentCaption?.times[1]}
+        />
+      </div>
+
       <textarea>{currentCaption?.lines.join("\n")}</textarea>
     </div>
   </div>
@@ -195,13 +211,29 @@
     margin: 0 4px;
   }
 
+  #editing-panel {
+    height: inherit;
+    background: #202020;
+    color: #ffffff;
+    margin-left: 8px;
+    padding: 8px;
+  }
+
   textarea {
     font-family: var(--captionFont);
     font-size: 20px;
     text-align: center;
     text-wrap-mode: nowrap;
     width: calc(var(--videoWidth) * 0.75);
-    margin-left: 8px;
+
     height: 100px;
+  }
+
+  label {
+    margin-right: 8px;
+  }
+
+  #start-time-input {
+    margin-right: auto;
   }
 </style>
