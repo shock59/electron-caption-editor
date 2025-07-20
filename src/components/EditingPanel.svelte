@@ -9,7 +9,7 @@
 
   function formatTimestamp(seconds: number | undefined) {
     if (seconds == undefined) return "";
-    return `${prependZeroes(Math.floor(seconds / 60))}:${prependZeroes(seconds % 60)}.${prependZeroes(Math.round(seconds - Math.floor(seconds)), 3)}`;
+    return `${prependZeroes(Math.floor(seconds / 60))}:${prependZeroes(Math.floor(seconds % 60))}.${prependZeroes(Math.round((seconds - Math.floor(seconds)) * 1000), 3)}`;
   }
 </script>
 
