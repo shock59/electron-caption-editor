@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import Timeline from "./components/Timeline.svelte";
   import { type Caption } from "src/types";
+  import EditingPanel from "./components/EditingPanel.svelte";
 
   const videoCaptions: Caption[] = [
     { times: [1, 2.5], lines: ["Caption 1"] },
@@ -52,98 +53,78 @@
   });
 </script>
 
-<main>
-  <div class="row">
-    <div class="column">
-      <div id="video-container">
-        <div id="player-container">
-          <!-- svelte-ignore a11y_media_has_caption -->
-          <video bind:this={video}>
-            <source
-              src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-              type="video/mp4"
-            />
-          </video>
+<main class="row">
+  <div class="column">
+    <div id="video-container">
+      <div id="player-container">
+        <!-- svelte-ignore a11y_media_has_caption -->
+        <video bind:this={video}>
+          <source
+            src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            type="video/mp4"
+          />
+        </video>
 
-          <div id="captions-container">
-            <div class="captions">
-              {#each currentCaption?.lines as line}
-                <div class="caption-line">{line}</div>
-              {/each}
-            </div>
+        <div id="captions-container">
+          <div class="captions">
+            {#each currentCaption?.lines as line}
+              <div class="caption-line">{line}</div>
+            {/each}
           </div>
         </div>
-
-        <div id="button-row">
-          <button>
-            <Icon
-              icon="mdi:rewind-5"
-              width="24"
-              height="24"
-              onclick={() => {
-                video.currentTime -= 5;
-              }}
-            />
-          </button>
-
-          <button>
-            <Icon icon="mdi:arrow-back" width="24" height="24" />
-          </button>
-
-          <button onclick={togglePlayback}>
-            {#if playing}
-              <Icon icon="mdi:pause" width="24" height="24" />
-            {:else}
-              <Icon icon="mdi:play" width="24" height="24" />
-            {/if}
-          </button>
-
-          <button>
-            <Icon icon="mdi:arrow-forward" width="24" height="24" />
-          </button>
-
-          <button>
-            <Icon
-              icon="mdi:fast-forward-5"
-              width="24"
-              height="24"
-              onclick={() => {
-                video.currentTime += 5;
-              }}
-            />
-          </button>
-        </div>
       </div>
 
-      {#if videoLoaded}
-        <Timeline
-          captions={videoCaptions}
-          videoDuration={video.duration}
-          {currentTime}
-        />
-      {/if}
-    </div>
+      <div id="button-row">
+        <button>
+          <Icon
+            icon="mdi:rewind-5"
+            width="24"
+            height="24"
+            onclick={() => {
+              video.currentTime -= 5;
+            }}
+          />
+        </button>
 
-    <div id="editing-panel">
-      <div class="row">
-        <label for="start-time-input">Start</label>
-        <input
-          id="start-time-input"
-          type="number"
-          value={currentCaption?.times[0]}
-        />
+        <button>
+          <Icon icon="mdi:arrow-back" width="24" height="24" />
+        </button>
 
-        <label for="end-time-input">End</label>
-        <input
-          id="end-time-input"
-          type="number"
-          value={currentCaption?.times[1]}
-        />
+        <button onclick={togglePlayback}>
+          {#if playing}
+            <Icon icon="mdi:pause" width="24" height="24" />
+          {:else}
+            <Icon icon="mdi:play" width="24" height="24" />
+          {/if}
+        </button>
+
+        <button>
+          <Icon icon="mdi:arrow-forward" width="24" height="24" />
+        </button>
+
+        <button>
+          <Icon
+            icon="mdi:fast-forward-5"
+            width="24"
+            height="24"
+            onclick={() => {
+              video.currentTime += 5;
+            }}
+          />
+        </button>
       </div>
-
-      <textarea>{currentCaption?.lines.join("\n")}</textarea>
     </div>
+
+    {#if videoLoaded}
+      <Timeline
+        captions={videoCaptions}
+        videoDuration={video.duration}
+        {currentTime}
+      />
+    {/if}
   </div>
+
+  <EditingPanel {currentCaption} />
 </main>
 
 <style>
@@ -151,6 +132,10 @@
     --videoWidth: 800px;
     --videoHeight: calc(var(--videoWidth) * (9 / 16));
     --captionFont: "Roboto";
+  }
+
+  main {
+    width: fit-content;
   }
 
   #video-container {
@@ -204,36 +189,17 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin: 8px 0;
+    padding: 4px 0;
+    margin-bottom: 8px;
+    background: var(--color-bg-2);
   }
 
   button {
+    padding: 4px 8px;
     margin: 0 4px;
-  }
-
-  #editing-panel {
-    height: inherit;
-    background: #202020;
-    color: #ffffff;
-    margin-left: 8px;
-    padding: 8px;
-  }
-
-  textarea {
-    font-family: var(--captionFont);
-    font-size: 20px;
-    text-align: center;
-    text-wrap-mode: nowrap;
-    width: calc(var(--videoWidth) * 0.75);
-
-    height: 100px;
-  }
-
-  label {
-    margin-right: 8px;
-  }
-
-  #start-time-input {
-    margin-right: auto;
+    outline: none;
+    border: none;
+    background: none;
+    color: var(--color-fg-2);
   }
 </style>

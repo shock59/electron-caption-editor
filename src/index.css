@@ -1,8 +1,19 @@
+* {
+  --color-bg-1: #101010;
+  --color-bg-2: #202020;
+  --color-bg-3: #282828;
+
+  --color-fg-1: #e2e2e2;
+  --color-fg-2: #a0a0a0;
+  --color-fg-3: #494949;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
   margin: auto;
-  padding: 2rem;
+  padding: 16px;
+  background-color: var(--color-bg-1);
 }
 
 .row {

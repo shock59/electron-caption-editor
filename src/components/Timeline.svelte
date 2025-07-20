@@ -56,14 +56,14 @@
   }
 
   let captionDivData: CaptionDivData[] = $state();
-  let timelineZoom: number = $state(1);
+  let timelineZoom: number = $state(5);
 
   onMount(() => {
     captionDivData = generateCaptionDivData();
   });
 </script>
 
-<div id="timeline-outer-container">
+<div id="greater-timeline-container">
   <div id="timeline-scrollable-container">
     <div id="timeline">
       {#each captionDivData as divData}
@@ -87,32 +87,36 @@
       ></div>
     </div>
   </div>
+
+  <div id="timeline-control-row" class="row">
+    <div class="timeline-control">
+      <label for="zoom-input">Zoom</label>
+      <input
+        bind:value={timelineZoom}
+        type="range"
+        min="1"
+        max="10"
+        step="0.1"
+        id="zoom-input"
+      />
+    </div>
+  </div>
 </div>
 
-<p>
-  <label for="zoom-input">Zoom</label>
-  <input
-    bind:value={timelineZoom}
-    type="range"
-    min="1"
-    max="10"
-    step="0.1"
-    defaultValue="1"
-    id="zoom-input"
-  />
-</p>
-
 <style>
-  #timeline-outer-container {
-    overflow: hidden;
-    transform: translate3d(0, 0, 0);
+  #greater-timeline-container {
+    background: var(--color-bg-2);
+    color: var(--color-fg-2);
   }
 
   #timeline-scrollable-container {
+    transform: translate3d(0, 0, 0);
     width: var(--videoWidth);
     overflow-x: scroll;
-    background: #202020;
+    scrollbar-color: var(--color-fg-3) var(--color-bg-2);
+    background: var(--color-bg-3);
   }
+
   #timeline {
     padding: 8px 0;
     display: flex;
@@ -122,7 +126,8 @@
 
   .timeline-caption {
     height: 32px;
-    background: rgb(138, 100, 209);
+    background: #a883ee;
+    color: var(--color-bg-1);
     text-overflow: clip;
     white-space: nowrap;
     overflow: hidden;
@@ -153,6 +158,45 @@
   #playhead {
     width: 2px;
     height: 100%;
-    background: red;
+    background: #215cff;
+  }
+
+  #timeline-control-row {
+    padding: 4px;
+  }
+
+  .timeline-control {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: fit-content;
+  }
+
+  .timeline-control label {
+    margin-right: 4px;
+  }
+
+  input[type="range"] {
+    appearance: none;
+    background: transparent;
+    height: 16px;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    cursor: pointer;
+    background: var(--color-fg-3);
+    height: 10px;
+    margin-top: 3px;
+    border-radius: 10px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 100%;
+    background: var(--color-fg-2);
+    margin-top: -3px;
   }
 </style>
