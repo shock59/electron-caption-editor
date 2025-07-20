@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Icon from "@iconify/svelte";
   import { onMount } from "svelte";
   import Timeline from "./components/Timeline.svelte";
   import { type Caption } from "src/types";
