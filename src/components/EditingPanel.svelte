@@ -2,6 +2,15 @@
   import { type Caption } from "src/types";
 
   let { currentCaption }: { currentCaption: Caption | undefined } = $props();
+
+  function prependZeroes(number: number, length: number = 2) {
+    return String(number).padStart(length, "0");
+  }
+
+  function formatTimestamp(seconds: number | undefined) {
+    if (seconds == undefined) return "";
+    return `${prependZeroes(Math.floor(seconds / 60))}:${prependZeroes(seconds % 60)}.${prependZeroes(Math.round(seconds - Math.floor(seconds)), 3)}`;
+  }
 </script>
 
 <div id="editing-panel">
@@ -9,12 +18,16 @@
     <label for="start-time-input">Start</label>
     <input
       id="start-time-input"
-      type="number"
-      value={currentCaption?.times[0]}
+      type="string"
+      value={formatTimestamp(currentCaption?.times[0])}
     />
 
     <label for="end-time-input">End</label>
-    <input id="end-time-input" type="number" value={currentCaption?.times[1]} />
+    <input
+      id="end-time-input"
+      type="string"
+      value={formatTimestamp(currentCaption?.times[1])}
+    />
   </div>
 
   <textarea>{currentCaption?.lines.join("\n")}</textarea>
