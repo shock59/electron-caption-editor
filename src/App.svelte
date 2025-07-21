@@ -17,12 +17,6 @@
 
   let currentCaption: Caption | undefined = $state(undefined);
 
-  function togglePlayback() {
-    if (playing) video.pause();
-    else video.play();
-    playing = !playing;
-  }
-
   function onAnimationFrame() {
     currentTime = video.currentTime;
 
