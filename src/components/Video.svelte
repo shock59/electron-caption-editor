@@ -55,7 +55,14 @@
     </button>
 
     <button>
-      <Icon icon="mdi:arrow-back" width="24" height="24" />
+      <Icon
+        icon="mdi:arrow-back"
+        onclick={() => {
+          alert("The back one frame button has not been implemented yet :(");
+        }}
+        width="24"
+        height="24"
+      />
     </button>
 
     <button onclick={togglePlayback}>
@@ -67,7 +74,14 @@
     </button>
 
     <button>
-      <Icon icon="mdi:arrow-forward" width="24" height="24" />
+      <Icon
+        icon="mdi:arrow-forward"
+        onclick={() => {
+          alert("The forward one frame button has not been implemented yet :(");
+        }}
+        width="24"
+        height="24"
+      />
     </button>
 
     <button>
