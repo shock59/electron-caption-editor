@@ -35,7 +35,7 @@ The todo list may be added to in the future and these items may not necessarily 
   - [ ] Loading a video file
   - [ ] Loading/exporting a caption file
   - [ ] Recent files
-- [ ] Nice looking interface
+- [x] Nice looking interface
 - [ ] Dynamically scalable interface
 - [ ] Video fullscreen mode
 - [ ] Keybinds
