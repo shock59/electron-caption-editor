@@ -1,7 +1,12 @@
 <script lang="ts">
+  import Icon from "@iconify/svelte";
   import { type Caption } from "src/types";
 
-  let { currentCaption }: { currentCaption: Caption | undefined } = $props();
+  let {
+    currentCaption,
+    addNewCaption,
+  }: { currentCaption: Caption | undefined; addNewCaption: () => void } =
+    $props();
 
   function prependZeroes(number: number, length: number = 2) {
     return String(number).padStart(length, "0");
@@ -28,6 +33,10 @@
       type="string"
       value={formatTimestamp(currentCaption?.times[1])}
     />
+
+    <button id="add-button" onclick={addNewCaption}>
+      <Icon icon="mdi:add" width="24" height="24" />
+    </button>
   </div>
 
   <textarea>{currentCaption?.lines.join("\n")}</textarea>
@@ -78,5 +87,15 @@
     background: #000000;
 
     border: 1px var(--color-fg-3) solid;
+  }
+
+  #add-button {
+    padding: 0;
+    margin: 0;
+    margin-left: auto;
+    outline: none;
+    border: none;
+    background: none;
+    color: var(--color-fg-2);
   }
 </style>
