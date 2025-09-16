@@ -21,11 +21,11 @@
   let currentTimelineZoom: number = $state(5);
 
   function onAnimationFrame() {
+    currentTime = video.currentTime;
+
     if (!playing) {
       return requestAnimationFrame(onAnimationFrame);
     }
-
-    currentTime = video.currentTime;
 
     if (
       currentCaption &&
