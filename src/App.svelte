@@ -15,9 +15,16 @@
   let playing: boolean = $state(false);
   let currentTime: number = $state(0);
 
+  let currentCaptionIndex: number = $state(0);
   let currentCaption: Caption | undefined = $state(undefined);
 
+  let currentTimelineZoom: number = $state(5);
+
   function onAnimationFrame() {
+    if (!playing) {
+      return requestAnimationFrame(onAnimationFrame);
+    }
+
     currentTime = video.currentTime;
 
     if (
@@ -29,10 +36,11 @@
     }
 
     if (!currentCaption) {
-      currentCaption = videoCaptions.find(
+      currentCaptionIndex = videoCaptions.findIndex(
         (caption) =>
           caption.times[0] <= currentTime && caption.times[1] >= currentTime
       );
+      currentCaption = videoCaptions[currentCaptionIndex];
     }
 
     requestAnimationFrame(onAnimationFrame);
@@ -73,6 +81,16 @@
     videoCaptions = [...videoCaptions, newCaption];
   }
 
+  function updateCurrentCaption(caption: Caption) {
+    videoCaptions[currentCaptionIndex] = caption;
+    currentCaption = videoCaptions[currentCaptionIndex];
+    videoCaptions = [...videoCaptions];
+  }
+
+  function updateTimelineZoom(zoom: number) {
+    currentTimelineZoom = zoom;
+  }
+
   onMount(() => {
     video.addEventListener("loadedmetadata", () => {
       videoLoaded = true;
@@ -98,12 +116,16 @@
           captions={videoCaptions}
           videoDuration={video.duration}
           {currentTime}
+          initialTimelineZoom={currentTimelineZoom}
+          {updateTimelineZoom}
         />
       {/key}
     {/if}
   </div>
 
-  <EditingPanel {currentCaption} {addNewCaption} />
+  {#key currentCaptionIndex}
+    <EditingPanel {currentCaption} {addNewCaption} {updateCurrentCaption} />
+  {/key}
 </main>
 
 <style>

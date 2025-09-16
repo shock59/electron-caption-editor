@@ -1,12 +1,21 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import Icon from "@iconify/svelte";
   import { type Caption } from "src/types";
 
   let {
     currentCaption,
     addNewCaption,
-  }: { currentCaption: Caption | undefined; addNewCaption: () => void } =
-    $props();
+    updateCurrentCaption,
+  }: {
+    currentCaption: Caption | undefined;
+    addNewCaption: () => void;
+    updateCurrentCaption: (caption: Caption) => void;
+  } = $props();
+
+  let startTime: number | undefined = $state();
+  let endTime: number | undefined = $state();
+  let lines: string = $state();
 
   function prependZeroes(number: number, length: number = 2) {
     return String(number).padStart(length, "0");
@@ -16,6 +25,25 @@
     if (seconds == undefined) return "";
     return `${prependZeroes(Math.floor(seconds / 60))}:${prependZeroes(Math.floor(seconds % 60))}.${prependZeroes(Math.round((seconds - Math.floor(seconds)) * 1000), 3)}`;
   }
+
+  function triggerUpdateCurrentCaption() {
+    updateCurrentCaption({
+      times: [startTime, endTime],
+      lines: lines.split("\n"),
+    });
+  }
+
+  onMount(() => {
+    if (currentCaption) {
+      startTime = currentCaption.times[0];
+      endTime = currentCaption.times[1];
+      lines = currentCaption.lines.join("\n");
+    } else {
+      startTime = undefined;
+      endTime = undefined;
+      lines = "";
+    }
+  });
 </script>
 
 <div id="editing-panel">
@@ -24,14 +52,18 @@
     <input
       id="start-time-input"
       type="string"
-      value={formatTimestamp(currentCaption?.times[0])}
+      bind:value={startTime}
+      oninput={triggerUpdateCurrentCaption}
+      disabled={!currentCaption}
     />
 
     <label for="end-time-input">End</label>
     <input
       id="end-time-input"
       type="string"
-      value={formatTimestamp(currentCaption?.times[1])}
+      bind:value={endTime}
+      oninput={triggerUpdateCurrentCaption}
+      disabled={!currentCaption}
     />
 
     <button id="add-button" onclick={addNewCaption}>
@@ -39,7 +71,11 @@
     </button>
   </div>
 
-  <textarea>{currentCaption?.lines.join("\n")}</textarea>
+  <textarea
+    bind:value={lines}
+    oninput={triggerUpdateCurrentCaption}
+    disabled={!currentCaption}
+  ></textarea>
 </div>
 
 <style>

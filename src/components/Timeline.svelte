@@ -6,8 +6,15 @@
     captions,
     videoDuration,
     currentTime,
-  }: { captions: Caption[]; videoDuration: number; currentTime: number } =
-    $props();
+    initialTimelineZoom,
+    updateTimelineZoom,
+  }: {
+    captions: Caption[];
+    videoDuration: number;
+    currentTime: number;
+    initialTimelineZoom: number;
+    updateTimelineZoom: (zoom: number) => void;
+  } = $props();
 
   // This is used as the divisor for all width operations and sets the scale of the timeline
   // If set to videoDuration then a zoom level of 1 will fit exactly the entire video in the timeline.
@@ -15,8 +22,6 @@
   const divisor = 500;
 
   function generateCaptionDivData() {
-    console.log(videoDuration);
-
     let divData: CaptionDivData[] = [];
     const sortedCaptions = captions.toSorted((a, b) => a.times[0] - b.times[0]);
 
@@ -55,10 +60,15 @@
     return divData;
   }
 
+  function triggerUpdateTimelineZoom() {
+    updateTimelineZoom(timelineZoom);
+  }
+
   let captionDivData: CaptionDivData[] = $state();
-  let timelineZoom: number = $state(5);
+  let timelineZoom: number = $state();
 
   onMount(() => {
+    timelineZoom = initialTimelineZoom;
     captionDivData = generateCaptionDivData();
   });
 </script>
@@ -93,6 +103,7 @@
       <label for="zoom-input">Zoom</label>
       <input
         bind:value={timelineZoom}
+        oninput={triggerUpdateTimelineZoom}
         type="range"
         min="1"
         max="10"
