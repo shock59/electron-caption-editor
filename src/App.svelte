@@ -20,13 +20,7 @@
 
   let currentTimelineZoom: number = $state(5);
 
-  function onAnimationFrame() {
-    currentTime = video.currentTime;
-
-    if (!playing) {
-      return requestAnimationFrame(onAnimationFrame);
-    }
-
+  function checkCurrentCaption() {
     if (
       currentCaption &&
       (currentCaption.times[0] > currentTime ||
@@ -41,6 +35,17 @@
           caption.times[0] <= currentTime && caption.times[1] >= currentTime
       );
       currentCaption = videoCaptions[currentCaptionIndex];
+    }
+  }
+
+  function onAnimationFrame() {
+    if (video.currentTime != currentTime) {
+      currentTime = video.currentTime;
+      checkCurrentCaption();
+    }
+
+    if (playing) {
+      checkCurrentCaption();
     }
 
     requestAnimationFrame(onAnimationFrame);
