@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import Icon from "@iconify/svelte";
   import { type Caption } from "src/types";
-  import { dialog } from "electron";
 
   let {
     currentCaption,
