@@ -129,7 +129,12 @@
   </div>
 
   {#key currentCaptionIndex}
-    <EditingPanel {currentCaption} {addNewCaption} {updateCurrentCaption} />
+    <EditingPanel
+      {currentCaption}
+      {addNewCaption}
+      {updateCurrentCaption}
+      videoDuration={video.duration}
+    />
   {/key}
 </main>
 

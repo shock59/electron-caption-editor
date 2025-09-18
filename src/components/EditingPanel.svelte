@@ -2,15 +2,18 @@
   import { onMount } from "svelte";
   import Icon from "@iconify/svelte";
   import { type Caption } from "src/types";
+  import { dialog } from "electron";
 
   let {
     currentCaption,
     addNewCaption,
     updateCurrentCaption,
+    videoDuration,
   }: {
     currentCaption: Caption | undefined;
     addNewCaption: () => void;
     updateCurrentCaption: (caption: Caption) => void;
+    videoDuration: number;
   } = $props();
 
   let startTime: number | undefined = $state();
@@ -27,6 +30,16 @@
   }
 
   function triggerUpdateCurrentCaption() {
+    if (
+      startTime > videoDuration ||
+      startTime < 0 ||
+      endTime > videoDuration ||
+      endTime < 0 ||
+      startTime >= endTime
+    ) {
+      // TODO: Warn the user that they inputted invalid times.
+      return;
+    }
     updateCurrentCaption({
       times: [startTime, endTime],
       lines: lines.split("\n"),
@@ -53,7 +66,7 @@
       id="start-time-input"
       type="string"
       bind:value={startTime}
-      oninput={triggerUpdateCurrentCaption}
+      onfocusout={triggerUpdateCurrentCaption}
       disabled={!currentCaption}
     />
 
@@ -62,7 +75,7 @@
       id="end-time-input"
       type="string"
       bind:value={endTime}
-      oninput={triggerUpdateCurrentCaption}
+      onfocusout={triggerUpdateCurrentCaption}
       disabled={!currentCaption}
     />
 
