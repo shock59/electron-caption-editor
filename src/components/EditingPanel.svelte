@@ -7,11 +7,13 @@
     currentCaption,
     addNewCaption,
     updateCurrentCaption,
+    saveFile,
     videoDuration,
   }: {
     currentCaption: Caption | undefined;
     addNewCaption: () => void;
     updateCurrentCaption: (caption: Caption) => void;
+    saveFile: () => void;
     videoDuration: number;
   } = $props();
 
@@ -78,7 +80,7 @@
       disabled={!currentCaption}
     />
 
-    <button id="add-button" onclick={addNewCaption}>
+    <button id="add-button" class="icon-button" onclick={addNewCaption}>
       <Icon icon="mdi:add" width="24" height="24" />
     </button>
   </div>
@@ -88,6 +90,19 @@
     oninput={triggerUpdateCurrentCaption}
     disabled={!currentCaption}
   ></textarea>
+
+  <div id="filemenu-row" class="row">
+    <button
+      class="icon-button"
+      onclick={() => {
+        window.electronAPI.openFile();
+      }}><Icon icon="mdi:folder-open" width="24" height="24" /></button
+    >
+
+    <button class="icon-button" onclick={() => saveFile()}
+      ><Icon icon="mdi:content-save" width="24" height="24" /></button
+    >
+  </div>
 </div>
 
 <style>
@@ -97,13 +112,23 @@
     color: #ffffff;
     margin-left: 8px;
     padding: 8px;
+    display: flex;
+    flex-direction: column;
   }
 
-  #timestamp-row {
+  #timestamp-row,
+  #filemenu-row {
     font-size: 16px;
     color: var(--color-fg-2);
     align-items: center;
+  }
+
+  #timestamp-row {
     margin-bottom: 8px;
+  }
+
+  #filemenu-row {
+    margin-top: auto;
   }
 
   #timestamp-row label {
@@ -137,13 +162,18 @@
     border: 1px var(--color-fg-3) solid;
   }
 
-  #add-button {
+  .icon-button {
     padding: 0;
     margin: 0;
-    margin-left: auto;
+    margin-right: 16px;
     outline: none;
     border: none;
     background: none;
     color: var(--color-fg-2);
+  }
+
+  #add-button {
+    margin-left: auto;
+    margin-right: 0;
   }
 </style>

@@ -96,6 +96,10 @@
     currentTimelineZoom = zoom;
   }
 
+  function saveFile() {
+    window.electronAPI.saveFile($state.snapshot(videoCaptions) as Caption[]);
+  }
+
   onMount(() => {
     video.addEventListener("loadedmetadata", () => {
       videoLoaded = true;
@@ -133,6 +137,7 @@
       {currentCaption}
       {addNewCaption}
       {updateCurrentCaption}
+      {saveFile}
       videoDuration={video.duration}
     />
   {/key}
