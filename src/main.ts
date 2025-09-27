@@ -8,8 +8,10 @@ import {
 } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
-import { writeFile } from "node:fs/promises";
+import { writeFile, readFile } from "node:fs/promises";
 import { Caption } from "./types";
+import subsrt from "subsrt-ts";
+import { ContentCaption } from "subsrt-ts/dist/types/handler";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -61,12 +63,25 @@ ${caption.lines.join("\n")}
   return srtContents;
 }
 
-function handleOpenFile(event: IpcMainEvent) {
+async function handleOpenFile(event: IpcMainEvent) {
   const webContents = event.sender;
   const win = BrowserWindow.fromWebContents(webContents);
-  dialog.showOpenDialog(win, {
+  const openDialog = await dialog.showOpenDialog(win, {
     filters: fileFilters,
   });
+
+  const fileContents = await readFile(openDialog.filePaths[0], "utf-8");
+  const rawCaptions = subsrt.parse(fileContents, { verbose: true });
+
+  let captions: Caption[] = [];
+  for (let caption of rawCaptions) {
+    const cc = caption as ContentCaption;
+    captions.push({
+      times: [cc.start / 1000, cc.end / 1000],
+      lines: cc.content.split("\n"),
+    });
+  }
+  return captions;
 }
 
 async function handleSaveFile(event: IpcMainEvent, captions: Caption[]) {
@@ -113,7 +128,7 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
-  ipcMain.on("open-file", handleOpenFile);
+  ipcMain.handle("open-file", handleOpenFile);
   ipcMain.on("save-file", handleSaveFile);
   createWindow();
 });

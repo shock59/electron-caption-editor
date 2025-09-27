@@ -7,14 +7,14 @@ import { Caption } from "./types";
 declare global {
   interface Window {
     electronAPI: {
-      openFile: () => void;
+      openFile: () => Promise<Caption[]>;
       saveFile: (captions: Caption[]) => void;
     };
   }
 }
 
 const api: Window["electronAPI"] = {
-  openFile: () => ipcRenderer.send("open-file"),
+  openFile: () => ipcRenderer.invoke("open-file"),
   saveFile: (captions: Caption[]) => ipcRenderer.send("save-file", captions),
 };
 contextBridge.exposeInMainWorld("electronAPI", api);

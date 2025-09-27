@@ -7,12 +7,14 @@
     currentCaption,
     addNewCaption,
     updateCurrentCaption,
+    openFile,
     saveFile,
     videoDuration,
   }: {
     currentCaption: Caption | undefined;
     addNewCaption: () => void;
     updateCurrentCaption: (caption: Caption) => void;
+    openFile: () => void;
     saveFile: () => void;
     videoDuration: number;
   } = $props();
@@ -92,14 +94,11 @@
   ></textarea>
 
   <div id="filemenu-row" class="row">
-    <button
-      class="icon-button"
-      onclick={() => {
-        window.electronAPI.openFile();
-      }}><Icon icon="mdi:folder-open" width="24" height="24" /></button
+    <button class="icon-button" onclick={openFile}
+      ><Icon icon="mdi:folder-open" width="24" height="24" /></button
     >
 
-    <button class="icon-button" onclick={() => saveFile()}
+    <button class="icon-button" onclick={saveFile}
       ><Icon icon="mdi:content-save" width="24" height="24" /></button
     >
   </div>

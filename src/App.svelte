@@ -96,6 +96,10 @@
     currentTimelineZoom = zoom;
   }
 
+  async function openFile() {
+    const newCaptions = await window.electronAPI.openFile();
+    videoCaptions = newCaptions;
+  }
   function saveFile() {
     window.electronAPI.saveFile($state.snapshot(videoCaptions) as Caption[]);
   }
@@ -137,6 +141,7 @@
       {currentCaption}
       {addNewCaption}
       {updateCurrentCaption}
+      {openFile}
       {saveFile}
       videoDuration={video.duration}
     />
