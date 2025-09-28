@@ -10,10 +10,12 @@ import {
 } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
+import fs from "node:fs";
 import { writeFile, readFile } from "node:fs/promises";
 import { Caption } from "./types";
 import subsrt from "subsrt-ts";
 import { ContentCaption } from "subsrt-ts/dist/types/handler";
+import mime from "mime";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -141,11 +143,13 @@ protocol.registerSchemesAsPrivileged([
   {
     scheme: "media",
     privileges: {
-      secure: true,
-      supportFetchAPI: true,
-      bypassCSP: true,
-      stream: true,
       standard: true,
+      secure: true,
+      bypassCSP: true,
+      allowServiceWorkers: true,
+      supportFetchAPI: true,
+      stream: true,
+      corsEnabled: true,
     },
   },
 ]);
@@ -159,8 +163,49 @@ app.on("ready", () => {
   ipcMain.on("save-file", handleSaveFile);
 
   protocol.handle("media", (req) => {
-    const pathToMedia = req.url.replace("media:/", "");
-    return net.fetch(`file://${pathToMedia}`);
+    const pathToMedia = decodeURI(req.url.replace("media:/", ""));
+    const mimeType = mime.getType(pathToMedia) || "application/octet-stream";
+
+    const stat = fs.statSync(pathToMedia);
+    const fileSize = stat.size;
+    const range = req.headers.get("range");
+
+    const headers: Record<string, string> = {
+      "Content-Type": mimeType,
+      "Accept-Ranges": "bytes",
+    };
+
+    if (range) {
+      const parts = range.replace(/bytes=/, "").split("-");
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+      if (start >= fileSize || end >= fileSize) {
+        return new Response(null, { status: 416, headers });
+      }
+
+      const chunksize = end - start + 1;
+
+      const stream = fs.createReadStream(pathToMedia, { start, end });
+
+      headers["Content-Range"] = `bytes ${start}-${end}/${fileSize}`;
+      headers["Content-Length"] = chunksize.toString();
+
+      return new Response(stream as any, {
+        status: 206,
+        headers,
+      });
+    } else {
+      const stream = fs.createReadStream(pathToMedia);
+      headers["Content-Length"] = fileSize.toString();
+
+      return new Response(stream as any, {
+        status: 200,
+        headers,
+      });
+    }
+
+    // return net.fetch(`file://${pathToMedia}`);
   });
 
   createWindow();

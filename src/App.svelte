@@ -104,8 +104,9 @@
   }
 
   async function openVideo() {
-    videoSrc = await window.electronAPI.openVideo();
+    videoSrc = "";
     videoLoaded = false;
+    videoSrc = await window.electronAPI.openVideo();
   }
   async function openFile() {
     const newCaptions = await window.electronAPI.openFile();
@@ -122,15 +123,17 @@
 
 <main class="row">
   <div class="column">
-    <Video
-      bind:video
-      bind:videoLoaded
-      bind:playing
-      bind:currentTime
-      src={videoSrc}
-      {currentCaption}
-      {onVideoLoaded}
-    />
+    {#key videoSrc}
+      <Video
+        bind:video
+        bind:videoLoaded
+        bind:playing
+        bind:currentTime
+        src={videoSrc}
+        {currentCaption}
+        {onVideoLoaded}
+      />
+    {/key}
 
     {#if videoLoaded}
       {#key videoCaptions}

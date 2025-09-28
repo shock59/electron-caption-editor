@@ -28,9 +28,7 @@
   }
 
   onMount(() => {
-    video.addEventListener("loadeddata", () => {
-      videoLoaded = true;
-    });
+    video.addEventListener("loadeddata", onVideoLoaded);
   });
 </script>
 
@@ -98,7 +96,6 @@
         width="24"
         height="24"
         onclick={() => {
-          console.log(video.currentTime);
           video.currentTime += 5;
         }}
       />
