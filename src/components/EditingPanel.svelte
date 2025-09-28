@@ -7,6 +7,7 @@
     currentCaption,
     addNewCaption,
     updateCurrentCaption,
+    openVideo,
     openFile,
     saveFile,
     videoDuration,
@@ -14,6 +15,7 @@
     currentCaption: Caption | undefined;
     addNewCaption: () => void;
     updateCurrentCaption: (caption: Caption) => void;
+    openVideo: () => void;
     openFile: () => void;
     saveFile: () => void;
     videoDuration: number;
@@ -94,6 +96,10 @@
   ></textarea>
 
   <div id="filemenu-row" class="row">
+    <button class="icon-button" onclick={openVideo}
+      ><Icon icon="mdi:file-video" width="24" height="24" /></button
+    >
+
     <button class="icon-button" onclick={openFile}
       ><Icon icon="mdi:folder-open" width="24" height="24" /></button
     >

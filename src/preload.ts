@@ -7,6 +7,7 @@ import { Caption } from "./types";
 declare global {
   interface Window {
     electronAPI: {
+      openVideo: () => Promise<string>;
       openFile: () => Promise<Caption[]>;
       saveFile: (captions: Caption[]) => void;
     };
@@ -14,6 +15,7 @@ declare global {
 }
 
 const api: Window["electronAPI"] = {
+  openVideo: () => ipcRenderer.invoke("open-video"),
   openFile: () => ipcRenderer.invoke("open-file"),
   saveFile: (captions: Caption[]) => ipcRenderer.send("save-file", captions),
 };

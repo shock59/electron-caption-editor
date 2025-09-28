@@ -10,6 +10,9 @@
     { times: [6, 12], lines: ["Caption 2", "second line"] },
   ]);
 
+  let videoSrc: string = $state(
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  );
   let video: HTMLVideoElement = $state();
   let videoLoaded: boolean = $state(false);
   let playing: boolean = $state(false);
@@ -96,6 +99,14 @@
     currentTimelineZoom = zoom;
   }
 
+  function onVideoLoaded() {
+    videoLoaded = true;
+  }
+
+  async function openVideo() {
+    videoSrc = await window.electronAPI.openVideo();
+    videoLoaded = false;
+  }
   async function openFile() {
     const newCaptions = await window.electronAPI.openFile();
     videoCaptions = newCaptions;
@@ -105,10 +116,6 @@
   }
 
   onMount(() => {
-    video.addEventListener("loadedmetadata", () => {
-      videoLoaded = true;
-    });
-
     requestAnimationFrame(onAnimationFrame);
   });
 </script>
@@ -120,7 +127,9 @@
       bind:videoLoaded
       bind:playing
       bind:currentTime
+      src={videoSrc}
       {currentCaption}
+      {onVideoLoaded}
     />
 
     {#if videoLoaded}
@@ -141,6 +150,7 @@
       {currentCaption}
       {addNewCaption}
       {updateCurrentCaption}
+      {openVideo}
       {openFile}
       {saveFile}
       videoDuration={video.duration}

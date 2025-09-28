@@ -5,6 +5,8 @@ import {
   IpcMainEvent,
   dialog,
   FileFilter,
+  protocol,
+  net,
 } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
@@ -61,6 +63,17 @@ ${caption.lines.join("\n")}
   }
 
   return srtContents;
+}
+
+async function handleOpenVideo(event: IpcMainEvent) {
+  const webContents = event.sender;
+  const win = BrowserWindow.fromWebContents(webContents);
+  const openDialog = await dialog.showOpenDialog(win, {
+    filters: [
+      { name: "Video files (.mp4, .webm)", extensions: ["mp4", "webm"] },
+    ],
+  });
+  return `media://${openDialog.filePaths[0]}`;
 }
 
 async function handleOpenFile(event: IpcMainEvent) {
@@ -124,12 +137,32 @@ function createWindow() {
   // mainWindow.webContents.openDevTools();
 }
 
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: "media",
+    privileges: {
+      secure: true,
+      supportFetchAPI: true,
+      bypassCSP: true,
+      stream: true,
+      standard: true,
+    },
+  },
+]);
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
+  ipcMain.handle("open-video", handleOpenVideo);
   ipcMain.handle("open-file", handleOpenFile);
   ipcMain.on("save-file", handleSaveFile);
+
+  protocol.handle("media", (req) => {
+    const pathToMedia = req.url.replace("media:/", "");
+    return net.fetch(`file://${pathToMedia}`);
+  });
+
   createWindow();
 });
 

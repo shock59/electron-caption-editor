@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { type Caption } from "src/types";
   import Icon from "@iconify/svelte";
 
@@ -7,13 +8,17 @@
     videoLoaded = $bindable(false),
     playing = $bindable(false),
     currentTime = $bindable(0),
+    src,
     currentCaption,
+    onVideoLoaded,
   }: {
     video: HTMLVideoElement;
     videoLoaded: boolean;
     playing: boolean;
     currentTime: number;
+    src: string;
     currentCaption: Caption | undefined;
+    onVideoLoaded: () => void;
   } = $props();
 
   function togglePlayback() {
@@ -21,16 +26,19 @@
     else video.play();
     playing = !playing;
   }
+
+  onMount(() => {
+    video.addEventListener("loadeddata", () => {
+      videoLoaded = true;
+    });
+  });
 </script>
 
 <div id="video-container">
   <div id="player-container">
     <!-- svelte-ignore a11y_media_has_caption -->
     <video bind:this={video}>
-      <source
-        src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-        type="video/mp4"
-      />
+      <source {src} type="video/mp4" />
     </video>
 
     <div id="captions-container">
@@ -90,6 +98,7 @@
         width="24"
         height="24"
         onclick={() => {
+          console.log(video.currentTime);
           video.currentTime += 5;
         }}
       />
