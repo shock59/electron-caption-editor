@@ -8,18 +8,21 @@
     currentTime,
     initialTimelineZoom,
     updateTimelineZoom,
+    updateVideoTime,
   }: {
     captions: Caption[];
     videoDuration: number;
     currentTime: number;
     initialTimelineZoom: number;
     updateTimelineZoom: (zoom: number) => void;
+    updateVideoTime: (pos: number) => void;
   } = $props();
 
   // This is used as the divisor for all width operations and sets the scale of the timeline
   // If set to videoDuration then a zoom level of 1 will fit exactly the entire video in the timeline.
   // However, that means the size of things will not be consistent across different video durations.
   const divisor = 500;
+  let timeline: HTMLDivElement;
 
   function generateCaptionDivData() {
     let divData: CaptionDivData[] = [];
@@ -64,6 +67,16 @@
     updateTimelineZoom(timelineZoom);
   }
 
+  function seek(event: MouseEvent) {
+    const rect = timeline.getBoundingClientRect();
+    const pos = (event.pageX - rect.left) / timeline.offsetWidth;
+    let timelineWidth = 0;
+    for (let divData of captionDivData) {
+      timelineWidth += 800 * divData.percent;
+    }
+    updateVideoTime((pos / timelineZoom) * (800 / timelineWidth));
+  }
+
   let captionDivData: CaptionDivData[] = $state();
   let timelineZoom: number = $state();
 
@@ -74,8 +87,10 @@
 </script>
 
 <div id="greater-timeline-container">
-  <div id="timeline-scrollable-container">
-    <div id="timeline">
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div id="timeline-scrollable-container" onclick={seek}>
+    <div id="timeline" bind:this={timeline}>
       {#each captionDivData as divData}
         <div
           class="timeline-caption {divData.show

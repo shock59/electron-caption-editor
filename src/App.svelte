@@ -103,6 +103,10 @@
     videoLoaded = true;
   }
 
+  function updateVideoTime(pos: number) {
+    video.currentTime = video.duration * pos;
+  }
+
   async function openVideo() {
     videoSrc = "";
     videoLoaded = false;
@@ -143,6 +147,7 @@
           {currentTime}
           initialTimelineZoom={currentTimelineZoom}
           {updateTimelineZoom}
+          {updateVideoTime}
         />
       {/key}
     {/if}
