@@ -1,7 +1,7 @@
 {
   "name": "electron-caption-editor",
   "productName": "Caption Editor",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Electron app for writing video captions/subtitles",
   "main": ".vite/build/main.js",
   "scripts": {
