@@ -11,15 +11,13 @@ Currently most features are not implemented, you can find a rough plan on what n
 
 ## Installation
 
-You can download the latest official release from the GitHub [releases](https://github.com/shock59/electron-caption-editor/releases) page.
+You can download the latest official release for Linux or Windows from the GitHub [releases](https://github.com/shock59/electron-caption-editor/releases) page.
 
-Currently you can only use this program in development mode by installing it manually. You will need [Node.js](https://nodejs.org/en) installed.
+Alternatively, to install the development version, you will need [Node.js](https://nodejs.org/en) installed and to follow these steps:
 
 1. Clone this repo and open it in a terminal
 2. Run `npm install` to install the dependencies
 3. Run `npm start` to start the program
-
-You can't actually edit captions yet, but you can preview the UI and play the example video with example captions.
 
 ## Usage
 
