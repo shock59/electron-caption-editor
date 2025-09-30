@@ -20,20 +20,20 @@ The todo list may be added to in the future and these items may not necessarily 
 
 ## Editing Sidebar
 - [x] Base sidebar display
-- [ ] Editing textarea updates caption
-- [ ] Setting caption start and end times
+- [x] Editing textarea updates caption
+- [x] Setting caption start and end times
 - [ ] Setting caption position/colours
 - [ ] Presets
 - [ ] Spellcheck language setting
 
 ## General Functionality
 - [ ] Track management
-  - [ ] Adding a new caption
+  - [x] Adding a new caption
   - [ ] Duplicating a caption
   - [ ] Removing a caption
 - [ ] Files
-  - [ ] Loading a video file
-  - [ ] Loading/exporting a caption file
+  - [x] Loading a video file
+  - [x] Loading/exporting a caption file
   - [ ] Recent files
 - [x] Nice looking interface
 - [ ] Dynamically scalable interface

@@ -7,26 +7,40 @@
     videoDuration,
     currentTime,
     initialTimelineZoom,
+    initialScrollLeft,
     updateTimelineZoom,
     updateVideoTime,
+    updateScrollLeft,
   }: {
     captions: Caption[];
     videoDuration: number;
     currentTime: number;
     initialTimelineZoom: number;
+    initialScrollLeft: number;
     updateTimelineZoom: (zoom: number) => void;
     updateVideoTime: (pos: number) => void;
+    updateScrollLeft: (scrollLeft: number) => void;
   } = $props();
 
   // This is used as the divisor for all width operations and sets the scale of the timeline
   // If set to videoDuration then a zoom level of 1 will fit exactly the entire video in the timeline.
   // However, that means the size of things will not be consistent across different video durations.
   const divisor = 500;
+  let scrollableContainer: HTMLDivElement;
   let timeline: HTMLDivElement;
 
   function generateCaptionDivData() {
     let divData: CaptionDivData[] = [];
     const sortedCaptions = captions.toSorted((a, b) => a.times[0] - b.times[0]);
+
+    if (sortedCaptions.length == 0)
+      return [
+        {
+          show: false,
+          percent: videoDuration / divisor,
+          text: "",
+        },
+      ];
 
     divData.push({
       show: false,
@@ -67,6 +81,12 @@
     updateTimelineZoom(timelineZoom);
   }
 
+  function triggerUpdateScrollLeft() {
+    requestAnimationFrame(() =>
+      updateScrollLeft(scrollableContainer.scrollLeft)
+    );
+  }
+
   function seek(event: MouseEvent) {
     const rect = timeline.getBoundingClientRect();
     const pos = (event.pageX - rect.left) / timeline.offsetWidth;
@@ -83,13 +103,23 @@
   onMount(() => {
     timelineZoom = initialTimelineZoom;
     captionDivData = generateCaptionDivData();
+    console.log(initialScrollLeft);
+    scrollableContainer.scrollLeft = initialScrollLeft;
+    requestAnimationFrame(
+      () => (scrollableContainer.scrollLeft = initialScrollLeft)
+    );
   });
 </script>
 
 <div id="greater-timeline-container">
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div id="timeline-scrollable-container" onclick={seek}>
+  <div
+    id="timeline-scrollable-container"
+    onclick={seek}
+    onscroll={triggerUpdateScrollLeft}
+    bind:this={scrollableContainer}
+  >
     <div id="timeline" bind:this={timeline}>
       {#each captionDivData as divData}
         <div
@@ -144,6 +174,7 @@
   }
 
   #timeline {
+    height: 32px;
     padding: 8px 0;
     display: flex;
     flex-direction: row;

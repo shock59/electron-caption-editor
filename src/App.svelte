@@ -5,10 +5,7 @@
   import EditingPanel from "./components/EditingPanel.svelte";
   import Video from "./components/Video.svelte";
 
-  let videoCaptions: Caption[] = $state([
-    { times: [1, 2.5], lines: ["Caption 1"] },
-    { times: [6, 12], lines: ["Caption 2", "second line"] },
-  ]);
+  let videoCaptions: Caption[] = $state([]);
 
   let videoSrc: string = $state(
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
@@ -22,6 +19,7 @@
   let currentCaption: Caption | undefined = $state(undefined);
 
   let currentTimelineZoom: number = $state(5);
+  let currentScrollLeft: number = $state(0);
 
   function checkCurrentCaption() {
     if (
@@ -60,25 +58,27 @@
       lines: ["New Caption"],
     };
 
-    const overlappingCaption = videoCaptions.find(
-      (caption) =>
-        // [  old  ]
-        //   {new}
-        (caption.times[0] < newCaption.times[0] &&
-          caption.times[1] > newCaption.times[1]) ||
-        //   [old]
-        // {  new  }
-        (caption.times[0] > newCaption.times[0] &&
-          caption.times[1] < newCaption.times[1]) ||
-        // [old]
-        //    {new}
-        (caption.times[0] < newCaption.times[0] &&
-          caption.times[1] > newCaption.times[0]) ||
-        //    [old]
-        // {new}
-        (caption.times[0] > newCaption.times[0] &&
-          caption.times[0] < newCaption.times[1])
-    );
+    const overlappingCaption =
+      currentCaption ||
+      videoCaptions.find(
+        (caption) =>
+          // [  old  ]
+          //   {new}
+          (caption.times[0] < newCaption.times[0] &&
+            caption.times[1] > newCaption.times[1]) ||
+          //   [old]
+          // {  new  }
+          (caption.times[0] > newCaption.times[0] &&
+            caption.times[1] < newCaption.times[1]) ||
+          // [old]
+          //    {new}
+          (caption.times[0] < newCaption.times[0] &&
+            caption.times[1] > newCaption.times[0]) ||
+          //    [old]
+          // {new}
+          (caption.times[0] > newCaption.times[0] &&
+            caption.times[0] < newCaption.times[1])
+      );
     if (overlappingCaption) {
       alert(
         "You can't create a new caption here because it would overlap with an existing one!"
@@ -98,6 +98,10 @@
 
   function updateTimelineZoom(zoom: number) {
     currentTimelineZoom = zoom;
+  }
+  function updateScrollLeft(newScrollLeft: number) {
+    console.log(newScrollLeft);
+    currentScrollLeft = newScrollLeft;
   }
 
   function onVideoLoaded() {
@@ -148,8 +152,10 @@
           videoDuration={video.duration}
           {currentTime}
           initialTimelineZoom={currentTimelineZoom}
+          initialScrollLeft={currentScrollLeft}
           {updateTimelineZoom}
           {updateVideoTime}
+          {updateScrollLeft}
         />
       {/key}
     {/if}
