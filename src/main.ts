@@ -6,7 +6,6 @@ import {
   dialog,
   FileFilter,
   protocol,
-  net,
 } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
@@ -118,8 +117,9 @@ async function handleSaveFile(event: IpcMainEvent, captions: Caption[]) {
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1462,
-    height: 688,
+    width: 1462 + (process.platform == "win32" ? 16 : 0),
+    height: 668 + (process.platform == "win32" ? 16 : 0),
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -162,7 +162,12 @@ app.on("ready", () => {
   ipcMain.on("save-file", handleSaveFile);
 
   protocol.handle("media", (req) => {
-    const pathToMedia = decodeURI(req.url.replace("media:/", ""));
+    let pathToMedia = decodeURI(req.url.replace("media:/", ""));
+    if (process.platform == "win32") {
+      let drive = pathToMedia.slice(1, 2);
+      pathToMedia = `${drive.toUpperCase()}:${pathToMedia.slice(2)}`;
+    }
+
     const mimeType = mime.getType(pathToMedia) || "application/octet-stream";
 
     const stat = fs.statSync(pathToMedia);
