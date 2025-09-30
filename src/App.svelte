@@ -52,6 +52,17 @@
     requestAnimationFrame(onAnimationFrame);
   }
 
+  function deleteCaption() {
+    if (!currentCaption) {
+      alert("You aren't currently selecting a caption to delete!");
+      return;
+    }
+    videoCaptions.splice(currentCaptionIndex, 1);
+    videoCaptions = [...videoCaptions];
+    currentCaption = undefined;
+    checkCurrentCaption();
+  }
+
   function addNewCaption() {
     const newCaption: Caption = {
       times: [currentTime, currentTime + 2],
@@ -164,6 +175,7 @@
   {#key currentCaptionIndex}
     <EditingPanel
       {currentCaption}
+      {deleteCaption}
       {addNewCaption}
       {updateCurrentCaption}
       {openVideo}

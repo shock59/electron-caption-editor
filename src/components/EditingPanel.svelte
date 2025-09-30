@@ -5,6 +5,7 @@
 
   let {
     currentCaption,
+    deleteCaption,
     addNewCaption,
     updateCurrentCaption,
     openVideo,
@@ -13,6 +14,7 @@
     videoDuration,
   }: {
     currentCaption: Caption | undefined;
+    deleteCaption: () => void;
     addNewCaption: () => void;
     updateCurrentCaption: (caption: Caption) => void;
     openVideo: () => void;
@@ -84,6 +86,9 @@
       disabled={!currentCaption}
     />
 
+    <button id="delete-button" class="icon-button" onclick={deleteCaption}>
+      <Icon icon="mdi:bin" width="24" height="24" />
+    </button>
     <button id="add-button" class="icon-button" onclick={addNewCaption}>
       <Icon icon="mdi:add" width="24" height="24" />
     </button>
@@ -177,8 +182,13 @@
     color: var(--color-fg-2);
   }
 
-  #add-button {
+  #delete-button {
     margin-left: auto;
+    margin-right: 0;
+  }
+
+  #add-button {
+    margin-left: 16px;
     margin-right: 0;
   }
 </style>
