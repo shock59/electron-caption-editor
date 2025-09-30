@@ -120,6 +120,7 @@ function createWindow() {
     width: 1462 + (process.platform == "win32" ? 16 : 0),
     height: 668 + (process.platform == "win32" ? 16 : 0),
     autoHideMenuBar: true,
+    resizable: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
