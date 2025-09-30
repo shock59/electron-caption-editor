@@ -30,7 +30,7 @@ The todo list may be added to in the future and these items may not necessarily 
 - [ ] Track management
   - [x] Adding a new caption
   - [ ] Duplicating a caption
-  - [ ] Removing a caption
+  - [x] Removing a caption
 - [ ] Files
   - [x] Loading a video file
   - [x] Loading/exporting a caption file
