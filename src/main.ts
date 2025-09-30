@@ -24,7 +24,6 @@ if (started) {
 
 const fileFilters: FileFilter[] = [
   { name: "SubRip Text (.srt)", extensions: ["srt"] },
-  { name: "WebVTT (.vtt)", extensions: ["vtt"] },
 ];
 
 function padZeroes(

@@ -87,6 +87,7 @@
     }
 
     videoCaptions = [...videoCaptions, newCaption];
+    checkCurrentCaption();
   }
 
   function updateCurrentCaption(caption: Caption) {
@@ -111,6 +112,7 @@
     videoSrc = "";
     videoLoaded = false;
     videoSrc = await window.electronAPI.openVideo();
+    playing = false;
   }
   async function openFile() {
     const newCaptions = await window.electronAPI.openFile();

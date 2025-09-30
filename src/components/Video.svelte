@@ -21,14 +21,31 @@
     onVideoLoaded: () => void;
   } = $props();
 
+  let frame = $state(0);
+
+  function prependZeroes(number: number, length: number = 2) {
+    return String(number).padStart(length, "0");
+  }
+
+  function formatTimestamp(seconds: number | undefined) {
+    if (seconds == undefined) return "";
+    return `${prependZeroes(Math.floor(seconds / 60))}:${prependZeroes(Math.floor(seconds % 60))}`;
+  }
+
   function togglePlayback() {
     if (playing) video.pause();
     else video.play();
     playing = !playing;
   }
 
+  function onAnimationFrame() {
+    frame++;
+    requestAnimationFrame(onAnimationFrame);
+  }
+
   onMount(() => {
     video.addEventListener("loadeddata", onVideoLoaded);
+    onAnimationFrame();
   });
 </script>
 
@@ -49,6 +66,14 @@
   </div>
 
   <div id="button-row">
+    {#key frame}
+      <span id="left"
+        >{formatTimestamp(video?.currentTime)} / {formatTimestamp(
+          video?.duration
+        )}</span
+      >
+    {/key}
+
     <button>
       <Icon
         icon="mdi:rewind-5"
@@ -57,17 +82,6 @@
         onclick={() => {
           video.currentTime -= 5;
         }}
-      />
-    </button>
-
-    <button>
-      <Icon
-        icon="mdi:arrow-back"
-        onclick={() => {
-          alert("The back one frame button has not been implemented yet :(");
-        }}
-        width="24"
-        height="24"
       />
     </button>
 
@@ -81,17 +95,6 @@
 
     <button>
       <Icon
-        icon="mdi:arrow-forward"
-        onclick={() => {
-          alert("The forward one frame button has not been implemented yet :(");
-        }}
-        width="24"
-        height="24"
-      />
-    </button>
-
-    <button>
-      <Icon
         icon="mdi:fast-forward-5"
         width="24"
         height="24"
@@ -100,6 +103,12 @@
         }}
       />
     </button>
+
+    {#key frame}
+      <span id="right"
+        >{video?.currentTime.toFixed(3)} / {video?.duration.toFixed(3)}</span
+      >
+    {/key}
   </div>
 </div>
 
@@ -167,5 +176,22 @@
     border: none;
     background: none;
     color: var(--color-fg-2);
+  }
+
+  span {
+    width: 200px;
+    color: var(--color-fg-2);
+
+    font-family: "Inter", sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  span#left {
+    margin: auto;
+    margin-left: 8px;
+  }
+  span#right {
+    margin: auto;
+    margin-right: 8px;
+    text-align: right;
   }
 </style>
